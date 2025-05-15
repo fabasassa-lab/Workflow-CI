@@ -31,4 +31,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: air-quality-preprocessed
-          path: MLProject/ispu_preprocessed.csv
+          path: ispu_preprocessed.csv
