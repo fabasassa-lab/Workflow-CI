@@ -1,0 +1,9 @@
+digest: 32d73f37
+name: dataset
+profile: '{"num_rows": 292, "num_elements": 1168}'
+schema: '{"mlflow_colspec": [{"type": "double", "name": "PM10", "required": true},
+  {"type": "double", "name": "SO2", "required": true}, {"type": "double", "name":
+  "CO", "required": true}, {"type": "double", "name": "O3", "required": true}]}'
+source: '{"tags": {"mlflow.user": "runner", "mlflow.source.name": "modelling.py",
+  "mlflow.source.type": "LOCAL", "mlflow.source.git.commit": "6322c54307bebfc4e020167ba89b18e77bfb7a88"}}'
+source_type: code
