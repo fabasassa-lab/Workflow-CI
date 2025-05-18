@@ -7,7 +7,9 @@ from sklearn.model_selection import train_test_split
 mlflow.set_experiment("Air Quality_Modelling")
 
 # Load dataset
-data = pd.read_csv("MLProject/ispu_preprocessing.csv")
+base_dir = os.path.dirname(__file__)
+csv_path = os.path.join(base_dir, "ispu_preprocessing.csv")
+data = pd.read_csv(csv_path)
 
 # Pastikan nama kolom sesuai
 print("📌 Kolom data:", data.columns.tolist())
