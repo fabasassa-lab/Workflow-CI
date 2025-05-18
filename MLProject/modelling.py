@@ -1,35 +1,69 @@
+import dagshub
 import mlflow
-import os
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
+import random
+import numpy as np
 
-# Set experiment name
-mlflow.set_experiment("Air Quality_Modelling")
+dagshub.init(repo_owner='fabasassa-lab', repo_name='Air_quality', mlflow=True)
 
-# Load dataset
-base_dir = os.path.dirname(__file__)
-csv_path = os.path.join(base_dir, "ispu_preprocessing.csv")
-data = pd.read_csv(csv_path)
+mlflow.set_experiment("Air Quality_Model_Tuning")
 
-# Pastikan nama kolom sesuai
-print("📌 Kolom data:", data.columns.tolist())
+data = pd.read_csv("ispu_preprocessing.csv")
 
-# Split data
 X_train, X_test, y_train, y_test = train_test_split(
     data.drop("Category", axis=1),
     data["Category"],
-    test_size=0.2,
-    random_state=42
+    random_state=42,
+    test_size=0.2
 )
 
-with mlflow.start_run(run_name="rf_autolog", nested=True):
-    mlflow.sklearn.autolog()
+input_example = X_train[0:5]
 
-    model = RandomForestClassifier(n_estimators=100, max_depth=10, random_state=42)
+with mlflow.start_run():
+    # Log parameters
+    n_estimators = 505
+    max_depth = 37
+    mlflow.autolog(log_models=False)
+    # Train model
+    model = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth)
+    mlflow.sklearn.log_model(
+        sk_model=model,
+        artifact_path="model",
+        input_example=input_example
+    )
     model.fit(X_train, y_train)
+    # Log metrics
+    accuracy = model.score(X_test, y_test)
+    mlflow.log_metric("accuracy", accuracy)
 
-    mlflow.sklearn.log_model(model, artifact_path="model")
+# Mendefinisikan Metode Random Search
+n_estimators_range = np.linspace(10, 1000, 5, dtype=int)  # 5 evenly spaced values
+max_depth_range = np.linspace(1, 50, 5, dtype=int)  # 5 evenly spaced values
 
-    acc = model.score(X_test, y_test)
-    print(f"✅ Akurasi: {acc:.4f}")
+best_accuracy = 0
+best_params = {}
+
+for n_estimators in n_estimators_range:
+    for max_depth in max_depth_range:
+        with mlflow.start_run(run_name=f"elastic_search_{n_estimators}_{max_depth}"):
+            mlflow.autolog(log_models=False)
+
+            # Train model
+            model = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth, random_state=42)
+            model.fit(X_train, y_train)
+
+            # Evaluate model
+            accuracy = model.score(X_test, y_test)
+            mlflow.log_metric("accuracy", accuracy)
+
+            # Save the best model
+            if accuracy > best_accuracy:
+                best_accuracy = accuracy
+                best_params = {"n_estimators": n_estimators, "max_depth": max_depth}
+                mlflow.sklearn.log_model(
+                    sk_model=model,
+                    artifact_path="model",
+                    input_example=input_example
+                    )
