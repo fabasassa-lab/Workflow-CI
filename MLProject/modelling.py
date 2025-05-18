@@ -23,15 +23,13 @@ X_train, X_test, y_train, y_test = train_test_split(
     random_state=42
 )
 
-# ✅ Ganti menjadi seperti ini (tanpa start_run):
-mlflow.sklearn.autolog()
+with mlflow.start_run(run_name="rf_autolog"):
+    mlflow.sklearn.autolog()
 
-model = RandomForestClassifier(n_estimators=100, max_depth=10, random_state=42)
-model.fit(X_train, y_train)
+    model = RandomForestClassifier(n_estimators=100, max_depth=10, random_state=42)
+    model.fit(X_train, y_train)
 
-# Log model secara eksplisit
-mlflow.sklearn.log_model(model, "model")
+    mlflow.sklearn.log_model(model, artifact_path="model")
 
-# Evaluasi model
-acc = model.score(X_test, y_test)
-print(f"✅ Akurasi: {acc:.4f}")
+    acc = model.score(X_test, y_test)
+    print(f"✅ Akurasi: {acc:.4f}")
