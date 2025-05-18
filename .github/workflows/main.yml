@@ -72,7 +72,7 @@ jobs:
             --name tokoalgish/air-quality-model
 
       - name: Tag Docker Image
-        run: docker tag weather-model ${{ secrets.DOCKER_HUB_USERNAME }}/tokoalgish/air-quality-model:latest
+        run: docker tag tokoalgish/air-quality-model ${{ secrets.DOCKER_HUB_USERNAME }}/tokoalgish/air-quality-model:latest
 
       - name: Push Docker Image
         run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/tokoalgish/air-quality-model:latest
