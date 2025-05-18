@@ -72,13 +72,13 @@ jobs:
           echo "Checking model URI..."
           echo "Using run ID: $RUN_ID"
           ls -l "mlruns/0/$RUN_ID/artifacts/model"
-          mlflow models build-docker --model-uri "mlruns/0/$RUN_ID/artifacts/model" --name tokoalgish/air-quality-model
+          mlflow models build-docker --model-uri "mlruns/0/$RUN_ID/artifacts/model" --name air-quality-model
 
       - name: Tag Docker Image
-        run: docker tag tokoalgish/air-quality-model ${{ secrets.DOCKER_HUB_USERNAME }}/tokoalgish/air-quality-model:latest
+        run: docker tag air-quality-model ${{ secrets.DOCKER_HUB_USERNAME }}/air-quality-model:latest
 
       - name: Push Docker Image
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/tokoalgish/air-quality-model:latest
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/air-quality-model:latest
 
       - name: Move MLflow artifacts to MLProject folder
         shell: bash -l {0}
