@@ -23,7 +23,7 @@ X_train, X_test, y_train, y_test = train_test_split(
     random_state=42
 )
 
-with mlflow.start_run(run_name="rf_autolog"):
+with mlflow.start_run(run_name="rf_autolog", nested=True):
     mlflow.sklearn.autolog()
 
     model = RandomForestClassifier(n_estimators=100, max_depth=10, random_state=42)
