@@ -43,12 +43,14 @@ jobs:
           mlflow run ./MLProject --env-manager=conda 
 
       - name: List contents of mlruns
+        shell: bash -l {0}
         run: |
           echo "🗂 Contents of mlruns/0:"
           find mlruns/0
 
 
       - name: Get latest MLflow run_id from model folder
+        shell: bash -l {0}
         run: |
           RUN_ID=$(find mlruns/0 -type d -path "*/artifacts/model" | sort | tail -n1 | cut -d'/' -f3)
           if [ -z "$RUN_ID" ]; then
@@ -65,6 +67,7 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Build Docker Image
+        shell: bash -l {0}
         run: |
           echo "Checking model URI..."
           echo "Using run ID: $RUN_ID"
@@ -78,11 +81,13 @@ jobs:
         run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/tokoalgish/air-quality-model:latest
 
       - name: Move MLflow artifacts to MLProject folder
+        shell: bash -l {0}
         run: |
           mkdir -p MLProject/mlruns
           cp -r mlruns/0 "MLProject/mlruns/"
 
       - name: Push MLflow artifacts to GitHub
+        shell: bash -l {0}
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
