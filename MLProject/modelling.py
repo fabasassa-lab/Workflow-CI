@@ -29,6 +29,9 @@ mlflow.sklearn.autolog()
 model = RandomForestClassifier(n_estimators=100, max_depth=10, random_state=42)
 model.fit(X_train, y_train)
 
+# Log model secara eksplisit
+mlflow.sklearn.log_model(model, "model")
+
 # Evaluasi model
 acc = model.score(X_test, y_test)
 print(f"✅ Akurasi: {acc:.4f}")
